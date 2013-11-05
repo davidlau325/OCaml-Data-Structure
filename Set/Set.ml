@@ -31,7 +31,8 @@ sig
 	val member : elem -> t -> bool
 end
 
-module UnbalancedTree (Element : ORDERED) : (SET with type elem = Element.t) =
+(* Use unbalanced binary tree as the implementation *)
+module Set (Element : ORDERED) : (SET with type elem = Element.t) =
 struct
 	type elem = Element.t
 	type t = 
@@ -54,12 +55,13 @@ struct
 			else true 
 end
 
-module IntegerTree = UnbalancedTree(INTEGER)
-module StringTree = UnbalancedTree(STRING)
-module FloatTree = UnbalancedTree(FLOAT)
+(* Generate Set with suitable type by Functor *)
+module IntegerSet = Set(INTEGER)
+module StringSet = Set(STRING)
+module FloatSet = Set(FLOAT)
 
 (* Example Usage *)
-let iTree = IntegerTree.empty
-let iTree2 = IntegerTree.insert 25 iTree
-let iTree3 = IntegerTree.insert 10 iTree2
-let isMember = IntegerTree.member 10 iTree3
+let iSet = IntegerSet.empty
+let iSet2 = IntegerSet.insert 25 iSet
+let iSet3 = IntegerSet.insert 10 iSet2
+let isMember = IntegerSet.member 10 iSet3
