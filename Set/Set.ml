@@ -1,25 +1,9 @@
+open Core.Std
+
 module type ORDERED =
 sig
 	type t
-	val lt : t -> t -> bool  (* x less than y *)
-end
-
-module INTEGER =
-struct
-	type t = int
-	let lt x y = x < y
-end
-
-module STRING =
-struct
-	type t = string
-	let lt x y = x < y
-end
-
-module FLOAT =
-struct
-	type t = float
-	let lt x y = x < y
+	val compare : t -> t -> int  (* x less than y *)
 end
 
 module type SET = 
@@ -42,23 +26,28 @@ struct
 	let rec insert x t = 
 		match t with
 		| Empty -> Tree (Empty,x,Empty)
-		| Tree (left,value,right) as s -> 
-			if Element.lt x value then Tree (insert x left,value,right)
-			else if Element.lt value x then Tree (left,value,insert x right)
-			else s
+		| Tree (left,value,right) as s ->
+			match Element.compare x value with
+			| 0 -> s
+			| n when n < 0 -> Tree (insert x left,value,right)
+			| n when n > 0 -> Tree (left,value,insert x right)
+			| _ -> failwith "ORDERED compare error"
+			
 	let rec member x t =
 		match t with
 		| Empty -> false
 		| Tree (left,value,right) ->
-			if Element.lt x value then member x left
-			else if Element.lt value x then member x right
-			else true 
+			match Element.compare x value with
+			| 0 -> true
+			| n when n < 0 -> member x left
+			| n when n > 0 -> member x right
+			| _ -> failwith "ORDERED compare error"
 end
 
-(* Generate Set with suitable type by Functor *)
-module IntegerSet = Set(INTEGER)
-module StringSet = Set(STRING)
-module FloatSet = Set(FLOAT)
+(* Generate Set with suitable type by Functor, in this case, use Core module *)
+module IntegerSet = Set(Int)
+module StringSet = Set(String)
+module FloatSet = Set(Float)
 
 (* Example Usage *)
 let iSet = IntegerSet.empty
