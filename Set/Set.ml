@@ -16,7 +16,7 @@ sig
 end
 
 (* Use unbalanced binary tree as the implementation *)
-module Set (Element : ORDERED) : (SET with type elem = Element.t) =
+module Set (Element : ORDERED) : (SET with type elem := Element.t) =
 struct
 	type elem = Element.t
 	type t = 
@@ -44,7 +44,7 @@ struct
 			| _ -> failwith "ORDERED compare error"
 end
 
-(* Generate Set with suitable type by Functor, in this case, use Core module *)
+(* Generate Set with suitable type, in this case, use Core module *)
 module IntegerSet = Set(Int)
 module StringSet = Set(String)
 module FloatSet = Set(Float)
